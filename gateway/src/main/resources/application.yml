@@ -1,0 +1,53 @@
+server:
+  port: 8889
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/v1/inventories/**
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/v1/orders/**
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/v1/user/**
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Method=POST,PUT,DELETE
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Method=GET
+
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/v1/carts/**
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
